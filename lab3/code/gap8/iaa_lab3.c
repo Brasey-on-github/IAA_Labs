@@ -24,7 +24,6 @@ static pi_buffer_t buffer;
 static SemaphoreHandle_t capture_sem = NULL;
 
 
-
 void start(void) {
 
     cpxInit();
@@ -75,14 +74,40 @@ void sendToSTM32(void) {
     /* TODO */
 }
 
+static int wifiConnected = 0;
+static int wifiClientConnected = 0;
+
+static CPXPacket_t rxp;
 /**
  * @brief Task wifi management
  * be able to:
  * - know if a PC is connected to the drone
  */
 void rx_wifi_task(void *parameters) {
-    
-    /* TODO */
+
+  while (1)
+  {
+    cpxReceivePacketBlocking(CPX_F_WIFI_CTRL, &rxp);
+
+    WiFiCTRLPacket_t * wifiCtrl = (WiFiCTRLPacket_t*) rxp.data;
+
+    switch (wifiCtrl->cmd)
+    {
+      case WIFI_CTRL_STATUS_WIFI_CONNECTED:
+        cpxPrintToConsole(LOG_TO_CRTP, "Wifi connected (%u.%u.%u.%u)\n",
+                          wifiCtrl->data[0], wifiCtrl->data[1],
+                          wifiCtrl->data[2], wifiCtrl->data[3]);
+        wifiConnected = 1;
+        break;
+      case WIFI_CTRL_STATUS_CLIENT_CONNECTED:
+        cpxPrintToConsole(LOG_TO_CRTP, "Wifi client connection status: %u\n", wifiCtrl->data[0]);
+        wifiClientConnected = wifiCtrl->data[0];
+        break;
+      default:
+        break;
+    }
+  }
+
 }
 
 /**
