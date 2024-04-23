@@ -63,6 +63,7 @@ void start(void) {
     }
 }
 
+static CPXPacket_t packet;
 /**
  * @brief transfer UART to stm32
  * - Retrieves FC frequencies
@@ -71,8 +72,7 @@ void start(void) {
  */
 void sendToSTM32(void) {
 
-    // Créé un packet
-    CPXPacket_t packet;
+    cpxPrintToConsole(LOG_TO_CRTP, "Entering sendToSTM32\n");
 
     // Récuperation de la Fréquence
     uint32_t fcFreq = pi_freq_get(PI_FREQ_DOMAIN_FC);
@@ -81,13 +81,14 @@ void sendToSTM32(void) {
     cpxInitRoute(CPX_T_GAP8, CPX_T_STM32, CPX_F_APP, &packet.route);
 
     // Preparation du payload
-    for(int i = 0 ; i < sizeof(fcFreq); i++){
+    for(unsigned  i = 0 ; i < sizeof(fcFreq); i++){
         packet.data[i] = *((uint8_t *)&fcFreq + i);
     }
     packet.dataLength = sizeof(fcFreq);
 
     // Envoie du packet
     cpxSendPacketBlocking(&packet);
+    cpxPrintToConsole(LOG_TO_CRTP, "Sending FC frequency to STM32 : %u\n", fcFreq);
 }
 
 static int wifiConnected = 0;
