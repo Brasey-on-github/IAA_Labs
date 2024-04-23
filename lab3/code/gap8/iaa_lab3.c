@@ -78,7 +78,7 @@ void sendToSTM32(void) {
     uint32_t fcFreq = pi_freq_get(PI_FREQ_DOMAIN_FC);
 
     // Assignation de la route
-    packet.route = cpxInitRoute(CPX_T_GAP8, CPX_T_STM32, CPX_F_APP, &packet.route);
+    cpxInitRoute(CPX_T_GAP8, CPX_T_STM32, CPX_F_APP, &packet.route);
 
     // Preparation du payload
     for(int i = 0 ; i < sizeof(fcFreq); i++){
@@ -91,7 +91,6 @@ void sendToSTM32(void) {
 }
 
 static int wifiConnected = 0;
-static int wifiClientConnected = 0;
 
 static CPXPacket_t rxp;
 /**
