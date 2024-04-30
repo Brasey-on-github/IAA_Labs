@@ -19,6 +19,8 @@ int open_pi_camera_himax(struct pi_device *device);
 static void capture_done_cb(void *arg);
 void camera_task(void *parameters);
 
+
+static pi_task_t task1;
 static int wifiClientConnected = 0;
 static struct pi_device camera;
 unsigned char *imgBuff;
@@ -152,7 +154,7 @@ void send_image_via_wifi(unsigned char *image, uint16_t width, uint16_t height) 
       cpxInitRoute(CPX_T_GAP8, CPX_T_WIFI_HOST, CPX_F_APP, &img_packet.route);
 
       // filling header
-      img_header_t *imgHeader = (img_header_t *) packet->data;
+      img_header_t *imgHeader = (img_header_t *) img_packet.data;
       size_t size = width * height;
 
       imgHeader->magic = 0xBC;
@@ -161,7 +163,7 @@ void send_image_via_wifi(unsigned char *image, uint16_t width, uint16_t height) 
       imgHeader->depth = 1;
       imgHeader->type = CAM_IMG;
       imgHeader->size = size;
-      img_packet->dataLength = sizeof(img_header_t);
+      img_packet.dataLength = sizeof(img_header_t);
 
       // sending header
       cpxSendPacketBlocking(&img_packet);
@@ -217,7 +219,7 @@ void camera_task(void *parameters) {
 
   capture_sem = xSemaphoreCreateBinary();
 
-  pi_camera_capture_async(&camera, &buffer, capture_done_cb, NULL);
+  pi_camera_capture_async(&camera, imgBuff, CAM_HEIGHT*CAM_WIDTH, pi_task_callback(&task1, capture_done_cb, NULL));
   pi_camera_control(&camera, PI_CAMERA_CMD_START, 0);
 
   xSemaphoreTake(capture_sem, portMAX_DELAY);
