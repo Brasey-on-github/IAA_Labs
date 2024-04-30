@@ -8,7 +8,7 @@
 #define IMG_ORIENTATION 0x0101
 #define CAM_WIDTH 324
 #define CAM_HEIGHT 244
-#define CAM_IMG 1
+#define CAM_IMG 0
 
 
 

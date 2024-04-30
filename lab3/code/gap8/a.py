@@ -109,7 +109,7 @@ while(1):
 
       if format == 0:
           bayer_img = np.frombuffer(imgStream, dtype=np.uint8)   
-          bayer_img.shape = (244, 324)
+          bayer_img.shape = (200, 200)
           color_img = cv2.cvtColor(bayer_img, cv2.COLOR_BayerBG2BGRA)
           cv2.imshow('Raw', bayer_img)
           cv2.imshow('Color', color_img)
