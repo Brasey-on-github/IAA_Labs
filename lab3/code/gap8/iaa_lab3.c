@@ -174,12 +174,16 @@ void send_image_via_wifi(unsigned char *image, uint16_t width, uint16_t height) 
 }
 
 
+static SemaphoreHandle_t capture_sem;
+
 /**
  * @brief Callback called when a capture is completed by the camera
  * - must release the acquisition task in order to take a new capture
  */
 static void capture_done_cb(void *arg) {
-    /* TODO */
+    /* DONE */
+  pi_camera_control(&camera, PI_CAMERA_CMD_STOP, 0);
+  xSemaphoreGive(capture_sem);
 }
 
 /**
@@ -189,8 +193,39 @@ static void capture_done_cb(void *arg) {
  * - Calls the function for sending the image by wifi 
  */
 void camera_task(void *parameters) {
+    /* DONE */
+  vTaskDelay(2000);
+  
+  static pi_buffer_t buffer;
+  
+  imgBuff = (unsigned char *)pmsis_l2_malloc(CAM_WIDTH*CAM_HEIGHT);
 
-    /* TODO */
+  if (imgBuff == NULL)
+  {
+    cpxPrintToConsole(LOG_TO_CRTP, "Failed to allocate Memory for Image \n");
+    return;
+  }
+
+  if (open_pi_camera_himax(&camera))
+  {
+    cpxPrintToConsole(LOG_TO_CRTP, "Failed to open camera\n");
+    return;
+  }
+
+  pi_buffer_init(&buffer, PI_BUFFER_TYPE_L2, imgBuff);
+  pi_buffer_set_format(&buffer, CAM_WIDTH, CAM_HEIGHT, 1, PI_BUFFER_FORMAT_GRAY);
+
+  capture_sem = xSemaphoreCreateBinary();
+
+  pi_camera_capture_async(&camera, &buffer, capture_done_cb, NULL);
+  pi_camera_control(&camera, PI_CAMERA_CMD_START, 0);
+
+  xSemaphoreTake(capture_sem, portMAX_DELAY);
+
+  // TODO : faire ses traitement ?
+
+  send_image_via_wifi(imgBuff, CAM_WIDTH, CAM_HEIGHT);
+
 }
 
 int open_pi_camera_himax(struct pi_device *device)
