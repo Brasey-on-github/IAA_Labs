@@ -184,10 +184,15 @@ void camera_task(void *parameters) {
 
   xSemaphoreTake(capture_sem, portMAX_DELAY);
 
-  // TODO : faire ses traitement ?
+  for (int i = 0; i < 200; i++) {
+    for (int j = 0; j < 200; j++) {
+      imgBuff[i*200 + j] = imgBuff[(i+CAM_HEIGHT-200)*CAM_WIDTH + (j+(CAM_WIDTH-200)/2)];
+    }
+  }
 
-  send_image_via_wifi(imgBuff, CAM_WIDTH, CAM_HEIGHT);
+  send_image_via_wifi(imgBuff, 200, 200);
 
+  pmsis_l2_malloc_free(imgBuff, CAM_WIDTH*CAM_HEIGHT);
 }
 
 int open_pi_camera_himax(struct pi_device *device)
