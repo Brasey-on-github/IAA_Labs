@@ -8,6 +8,8 @@
 #define IMG_ORIENTATION 0x0101
 #define CAM_WIDTH 324
 #define CAM_HEIGHT 244
+#define CAM_IMG 1
+
 
 
 void sendToSTM32(void);
@@ -126,13 +128,49 @@ void rx_wifi_task(void *parameters) {
 
 }
 
+typedef struct
+{
+  uint8_t magic;
+  uint16_t width;
+  uint16_t height;
+  uint8_t depth;
+  uint8_t type;
+  uint32_t size;
+} __attribute__((packed)) img_header_t;
+
 /**
  * @brief transfer WIFI gap8 to PC
  * Send a gap8 buffer to the PC
  * Need python code to receives data on PC
  */
 void send_image_via_wifi(unsigned char *image, uint16_t width, uint16_t height) {
-    /* TODO */
+    static CPXPacket_t img_packet;
+
+    if(wifiClientConnected != 0){
+
+      // init route
+      cpxInitRoute(CPX_T_GAP8, CPX_T_WIFI_HOST, CPX_F_APP, &img_packet.route);
+
+      // filling header
+      img_header_t *imgHeader = (img_header_t *) packet->data;
+      size_t size = width * height;
+
+      imgHeader->magic = 0xBC;
+      imgHeader->width = width;
+      imgHeader->height = height;
+      imgHeader->depth = 1;
+      imgHeader->type = CAM_IMG;
+      imgHeader->size = size;
+      img_packet->dataLength = sizeof(img_header_t);
+
+      // sending header
+      cpxSendPacketBlocking(&img_packet);
+
+      // Sending the image data 
+      sendBufferViaCPXBlocking(&img_packet,image,size);
+
+    }
+
 }
 
 

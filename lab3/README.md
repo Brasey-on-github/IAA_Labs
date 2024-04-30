@@ -69,7 +69,7 @@ Cette tâche est nécessaire afin de savoir si un PC s'est connecté au drone. C
 
 - La commande dans cette structure peut correspondre à différente actions (voir enum `WiFiCTRLType` dans *wifi.h*), la cmd représentant un client se connectant au drone est `WIFI_CTRL_STATUS_CLIENT_CONNECTED` définit dans *wifi.h*
 
-- Lorsque un paquet de ce type est reçu est que la cmd vaut `WIFI_CTRL_STATUS_CLIENT_CONNECTED` il est possible de mettre une variable global a jour (par exemple) permettant ainsi aux autres tâches de savoir si un client est connecté.
+- Lorsque un paquet de ce type est reçu et que la cmd vaut `WIFI_CTRL_STATUS_CLIENT_CONNECTED` il est possible de mettre une variable global a jour (par exemple) permettant ainsi aux autres tâches de savoir si un client est connecté.
 
 **EXEMPLE: *aideck-gap8-examples/examples/other/wifi-img-streamer/wifi-img-streamer.c***
 
