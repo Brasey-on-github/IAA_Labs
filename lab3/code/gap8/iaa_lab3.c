@@ -19,8 +19,6 @@ int open_pi_camera_himax(struct pi_device *device);
 static void capture_done_cb(void *arg);
 void camera_task(void *parameters);
 
-
-static pi_task_t task1;
 static int wifiClientConnected = 0;
 static struct pi_device camera;
 unsigned char *imgBuff;
@@ -218,6 +216,8 @@ void camera_task(void *parameters) {
   pi_buffer_set_format(&buffer, CAM_WIDTH, CAM_HEIGHT, 1, PI_BUFFER_FORMAT_GRAY);
 
   capture_sem = xSemaphoreCreateBinary();
+
+  pi_task_t task1;
 
   pi_camera_capture_async(&camera, imgBuff, CAM_HEIGHT*CAM_WIDTH, pi_task_callback(&task1, capture_done_cb, NULL));
   pi_camera_control(&camera, PI_CAMERA_CMD_START, 0);
