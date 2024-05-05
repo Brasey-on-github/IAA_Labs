@@ -34,6 +34,6 @@ Except the fact that we only send raws images.
   - x < MAX_WIDHT - 200
   - (MAX_HEIGHT - 200)/ 2 < y < MAX_HEIGHT - (MAX_HEIGHT - 200)/ 2
 
-** What is the shape of the original image ? **
+**What is the shape of the original image ?**
 - 324x244[px]
 
