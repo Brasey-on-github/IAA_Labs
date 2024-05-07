@@ -226,7 +226,7 @@ void camera_task(void *parameters) {
 
   for (int i = 0; i < 200; i++) {
     for (int j = 0; j < 200; j++) {
-      imgBuff[i*200 + j] = imgBuff[(i+CAM_HEIGHT-200)*CAM_WIDTH + (j+(CAM_WIDTH-200)/2)];
+      imgBuff[i*200 + j] = imgBuff[(i+(CAM_HEIGHT-200)/2)*CAM_WIDTH + (j+(CAM_WIDTH-200)/2)];
     }
   }
 
