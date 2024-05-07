@@ -22,9 +22,9 @@ Except the fact that we only send raws images.
 
 **Provide a plot of one original image and one of the cropped images.**
 
-![original](./img/img_cam)
+![original](./img/img_cam.png)
 
-![cropped](./img/img_cropped.jpeg)
+![cropped](./img/img_cropped.png)
 
 **Explain your cropping algorithm**
 - Our cropping algorithm keep the 200x200 centered pixels and we cut out the borders.
