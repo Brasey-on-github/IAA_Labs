@@ -8,8 +8,7 @@ Loic Brasey & Kylian Manzini
 - No there, is many others from the base application, mainly use to provide feedback about the execution.
 
 **What part of the data flow is responsible for these ?** 
-!!!!!!!!!!!!!!!TODO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-- ???
+- Some of theme come from the STM and some come from the others tasks of the GAP8.
 
 **What happens when you connect 2 clients to the GAP8 ? Is it an expected behavior ?**
 - As far as we know, the cpx lib is meant to be sent between different MCUs/host. And it doesn't mention multiple host support in the documentation. The code we've implement does not take car of any IP addresses so I would say no.
@@ -23,16 +22,14 @@ Except the fact that we only send raws images.
 
 **Provide a plot of one original image and one of the cropped images.**
 
-!!!!!!!!!!!!!!!TODO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+![original](./img/img_cam)
 
-![original]()
-
-![cropped]()
+![cropped](./img/img_cropped.jpeg)
 
 **Explain your cropping algorithm**
-- Our cropping algorithm keep the middle lower part of the image,the pixel(x,y) is kept if his:
-  - x < MAX_WIDHT - 200
-  - (MAX_HEIGHT - 200)/ 2 < y < MAX_HEIGHT - (MAX_HEIGHT - 200)/ 2
+- Our cropping algorithm keep the 200x200 centered pixels and we cut out the borders.
+- 62 < x <= 262
+- 22 < y <= 222
 
 **What is the shape of the original image ?**
 - 324x244[px]
