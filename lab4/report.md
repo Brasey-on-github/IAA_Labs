@@ -61,15 +61,22 @@ This formula represents the multiplication of the scaled quantized weights (Wiq 
 
 ### What’s the objective of the adjust command ?
 
-TODO
+adjust will convert all the HxWxC tensors into CxHxW and insert the proper transposes operations when needed. The adjust process also attempts to remove any unnecessary transposes in the graph so even with ONNX graphs which are in CxHxW format it should be run.
 
 ### With the help of the nnTool documentation 1, provide the right command for layer fusions.
 
-TODO
+fusions --scale8
 
 ### Which layers have been fused ?
 
-TODO
+_conv1_Conv,_pool_MaxPool,_Relu into _conv1_Conv_fusion
+
+_conv2_Conv,_pool_1_MaxPool,_Relu_1 into _conv2_Conv_fusion
+
+_fc1_MatMul,_Relu_2 into _fc1_MatMul_fusion
+
+_fc2_MatMul,_Relu_3 into _fc2_MatMul_fusion
+
 
 ### Based on the first parts of this lab, explain why we need a set of images for our quantization.
 
