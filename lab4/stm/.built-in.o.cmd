@@ -1,0 +1,1 @@
+cmd_/home/bitcraze/Desktop/IAA_Labs/lab4/stm/built-in.o :=  arm-none-eabi-gcc --specs=nosys.specs --specs=nano.specs -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16   -r -o /home/bitcraze/Desktop/IAA_Labs/lab4/stm/built-in.o /home/bitcraze/Desktop/IAA_Labs/lab4/stm/src/stm_to_gap8.o
