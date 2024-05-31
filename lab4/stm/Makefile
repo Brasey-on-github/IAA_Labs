@@ -5,7 +5,7 @@ CRAZYFLIE_BASE := ~/Desktop/projects/crazyflie-firmware/
 #
 OOT_CONFIG := $(PWD)/config
 # To include C file
-obj-y += src/stm_to_gap8.o
+obj-y += src/drone_controls.o
 # To add some includes
 EXTRA_CFLAGS += -I$(PWD)/src/includes
 include $(CRAZYFLIE_BASE)/tools/make/oot.mk
