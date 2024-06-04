@@ -24,6 +24,7 @@ deps_/home/bitcraze/Desktop/IAA_Labs/lab4/stm/src/drone_controls.o := \
   /usr/include/newlib/sys/string.h \
   /usr/lib/gcc/arm-none-eabi/9.2.1/include/stdint.h \
   /usr/lib/gcc/arm-none-eabi/9.2.1/include/stdbool.h \
+  /usr/include/newlib/math.h \
   /home/bitcraze/projects/crazyflie-firmware/src/modules/interface/app.h \
   /home/bitcraze/projects/crazyflie-firmware/src/modules/interface/cpx/cpx.h \
   /home/bitcraze/projects/crazyflie-firmware/src/modules/interface/cpx/cpx_internal_router.h \
