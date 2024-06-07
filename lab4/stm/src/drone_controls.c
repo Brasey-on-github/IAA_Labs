@@ -153,7 +153,7 @@ void appMain() {
   // Register a callback for CPX packets.
   // Packets sent to destination=CPX_T_STM32 and function=CPX_F_APP will arrive here
   cpxRegisterAppMessageHandler(cpxPacketCallback);
-  vTaskDelay(M2T(2000));
+  vTaskDelay(M2T(10000));
   idle(&s);
     
   while(1) {

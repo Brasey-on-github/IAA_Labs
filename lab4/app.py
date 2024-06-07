@@ -109,6 +109,10 @@ while(1):
 
       ### envoyer bayer_img dans le model
 
+      ### Kylian code
+
+      ### ENd Kylian code
+
       send_to_stm(client_socket,170,0,170,10,5)
 
       cv2.imshow('Raw', bayer_img)
