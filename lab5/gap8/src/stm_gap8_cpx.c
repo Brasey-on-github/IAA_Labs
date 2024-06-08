@@ -119,6 +119,7 @@ void commande_task(void *parameters)
   while (1)
   {
     cpxReceivePacketBlocking(CPX_F_APP, &packet_control);
+    vTaskDelay(10);
   }
 }
 
