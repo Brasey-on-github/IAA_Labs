@@ -44,6 +44,7 @@ import numpy as np
 import torch
 from torch import nn
 from torch.nn import Module
+import torch.nn.functional as F
 
 class CNN(Module):
     def __init__(self):
@@ -180,15 +181,16 @@ while(1):
       meanTimePerImage = (time.time()-start) / count
 
       bayer_img = np.frombuffer(imgStream, dtype=np.uint8)   
-      bayer_img.shape = (244, 324)
+      bayer_img
+      bayer_img.shape = (1,244, 324)
 
       
-      output = predict(model, image_reshaped)
+      output = predict(model, bayer_img)
       output = denormalize(output)
-
+      print(output)
       ax,ay,bx,by = output
-
-      send_to_stm(client_socket,ax,ay,bx,by,5)
-
+     
+      send_to_stm(client_socket,int(ax),int(ay),int(bx),int(by),5)
+      bayer_img.shape = (244, 324)
       cv2.imshow('Raw', bayer_img)
       cv2.waitKey(1)
