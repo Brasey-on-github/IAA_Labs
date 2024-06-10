@@ -15,11 +15,11 @@ noise_opacity = 0.3
 num_segments = 5
 
 # Directory to save images
-output_dir = 'lab5/dataset/images'
+output_dir = 'lab5/pathfinding/dataset/images'
 os.makedirs(output_dir, exist_ok=True)
 
 # Directory to save CSV file
-csv_dir = 'lab5/dataset'
+csv_dir = 'lab5/pathfinding/dataset'
 os.makedirs(csv_dir, exist_ok=True)
 
 def add_noise(image, opacity):
@@ -87,16 +87,6 @@ with open(csv_filename, mode='w', newline='') as csv_file:
         # Draw the final segment
         cv2.line(image, (start_x, start_y), (end_x, start_y), color, thickness)
 
-        
-        pt1 = np.float32([[0, width], [height, width],
-                            [0, 400], [height, 400]])
-        pt2 = np.float32([[0, 0], [400, 0],
-                        [0, 640], [400, 640]])
-        
-        # Apply Perspective Transform Algorithm
-        matrix = cv2.getPerspectiveTransform(pts1, pts2)
-        result = cv2.warpPerspective(frame, matrix, (500, 600))
-
 
         # Apply noise to the image
         image = add_noise(image, noise_opacity)
@@ -104,8 +94,11 @@ with open(csv_filename, mode='w', newline='') as csv_file:
         # Apply grayscale to the image
         image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
+        print(f'Generated image {i}')
+
         # Save the image
         filename = os.path.join(output_dir, f'{i}.png')
+        print(f'Saving image to {filename}')
         cv2.imwrite(filename, image)
 
         # Write segment information to CSV
