@@ -41,16 +41,35 @@ import argparse
 import time
 import socket,os,struct, time
 import numpy as np
-
+import torch
+from torch import nn
+from torch.nn import Module
+import torch.nn.functional as F
+from PathFinder import PathFinder
 
 def send_to_stm(socket,x1,y1,x2,y2,dist):
   size = 22 # 2 -> CPX_HEADER + 5 * sizeof(int)
   route = 0xd9 # HOST to STM
   function = 5 # CPX_F_APP
-  packet = struct.pack('<HBBIIIII',size,route,function,x1,y1,x2,y2,dist)
+  packet = struct.pack('<HBBiiiii',size,route,function,x1,y1,x2,y2,dist)
   socket.sendall(packet)
 
+def predict(model , image):
+    model.eval()
+    with torch.no_grad():
+        image = torch.from_numpy(np.expand_dims(image,axis=1)).float()
+        image = image.to(device)
+        outputs = model(image)
+    return outputs
 
+def denormalize(coords):   
+    return coords
+
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+device
+
+model = PathFinder.init()
+model.load('./pathfinder3.pth') 
 
 # Args for setting IP/port of AI-deck. Default settings are for when
 # AI-deck is in AP mode.
@@ -80,6 +99,7 @@ import cv2
 
 start = time.time()
 count = 0
+send_to_stm(client_socket,1,2,0,0,0)
 while(1):
     
     # First get the info
@@ -103,15 +123,18 @@ while(1):
      
       count = count + 1
       meanTimePerImage = (time.time()-start) / count
-
-      bayer_img = np.frombuffer(imgStream, dtype=np.uint8)   
+      
+      bayer_img = np.frombuffer(imgStream, dtype=np.uint8) 
+      
+      
+         
       bayer_img.shape = (244, 324)
-
-      ### envoyer bayer_img dans le model
-
-      # et envoyer les sortie au stm 
-
-      send_to_stm(client_socket,170,0,170,10,5)
-
+      bayer_img = cv2.cvtColor(bayer_img,cv2.COLOR_BayerBG2GRAY)
+      bayer_img = cv2.flip(bayer_img,0)
+      output = model.get_line_coords(model.preprocess(bayer_img.astype(np.float32)))
+      send_to_stm(client_socket,int(output[0]),0,int(output[1]),int(output[2]),5)
+      
+      bayer_img = cv2.line(bayer_img,(int(output[0]),0),(int(output[1]),int(output[2])),(255,0,0),5)
+      bayer_img = cv2.flip(bayer_img,0)
       cv2.imshow('Raw', bayer_img)
       cv2.waitKey(1)

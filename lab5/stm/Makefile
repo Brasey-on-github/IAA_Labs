@@ -7,6 +7,5 @@ OOT_CONFIG := $(PWD)/config
 # To include C file
 obj-y += src/drone_controls.o
 # To add some includes
-EXTRA_CFLAGS += -I$(PWD)/src/includes
 LIBSFLAGS += -lm
 include $(CRAZYFLIE_BASE)/tools/make/oot.mk
