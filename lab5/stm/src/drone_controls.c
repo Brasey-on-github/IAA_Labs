@@ -43,11 +43,10 @@
 #include "debug.h"
 #include "commander.h"
 
-#define SPEED 0.05
-#define ANGLE_90 1.57
-#define MAX_ANGLE 0.26 
-#define MAX_SIDE 50
-#define MIDDLE 127 
+#define SPEED 0.1
+#define MAX_ANGLE 0.5
+#define MAX_SIDE 80
+#define MIDDLE 172
 #define TIMOUT 2000
 
 static void cpxPacketCallback(const CPXPacket_t* cpxRx);
@@ -55,10 +54,10 @@ static void cpxPacketCallback(const CPXPacket_t* cpxRx);
 static void idle(setpoint_t *setpoint);
 
 typedef struct {
-  unsigned x1;
-  unsigned y1;
-  unsigned x2;
-  unsigned y2;
+  int x1;
+  int y1;
+  int x2;
+  int y2;
   unsigned dist;
 } data_t;
 
@@ -69,50 +68,52 @@ static void cpxPacketCallback(const CPXPacket_t* cpxRx) {
   data_t* rx_commands;
   rx_commands = (data_t*)&cpxRx->data[0];
   timout = TIMOUT; 
-
-  static double angle = 0.;
-  if(angle == 0.){
-    angle = atan2((double)rx_commands->y2-rx_commands->y1,(double)rx_commands->x2-rx_commands->x1);
-  }else{
-    angle = atan2((double)rx_commands->y2-rx_commands->y1,(double)rx_commands->x2-rx_commands->x1) * 0.1 + 0.9 * angle;
-  }
-
   static int dist_from_center = -128;
   if(dist_from_center == -128){
     dist_from_center = rx_commands->x1 -MIDDLE; 
   }else{
-    dist_from_center = (rx_commands->x1 -MIDDLE) * 0.1 + 0.9 * dist_from_center;
+    dist_from_center = (rx_commands->x1 -MIDDLE) * 0.4 + 0.6 * dist_from_center;
   }
 
-  if(dist_from_center < (MIDDLE - MAX_SIDE)){
+
+  static double angle = 400.;
+  if(angle == 400.){
+    angle = atan2(rx_commands->x1 -MIDDLE,(double)rx_commands->y2);
+  }else{
+    angle = atan2(rx_commands->x1 -MIDDLE,(double)rx_commands->y2) * 0.4 + 0.6 * angle;
+  }
+
+  DEBUG_PRINT("%d %d\n",dist_from_center,(int)(angle/3.14*180));
+  
+  if(dist_from_center > MAX_SIDE){
     DEBUG_PRINT("right\n");
     memset(&s,0,sizeof(s));
     s.mode.z = modeAbs;
-    s.position.z = 0.3;
+    s.position.z = 0.15;
     s.mode.x = modeVelocity;
     s.mode.y = modeVelocity;
-    s.velocity.x = SPEED;
-    s.velocity.y = 0.;
+    s.velocity.y = -SPEED;
+    s.velocity.x = 0.;
     s.velocity_body = true;
     s.mode.yaw = modeVelocity;
     s.attitudeRate.yaw = 0;
-  }else if(dist_from_center < (MIDDLE - MAX_SIDE)){
+  }else if(dist_from_center < -MAX_SIDE){
     DEBUG_PRINT("left\n");
     memset(&s,0,sizeof(s));
     s.mode.z = modeAbs;
-    s.position.z = 0.3;
+    s.position.z = 0.15;
     s.mode.x = modeVelocity;
     s.mode.y = modeVelocity;
-    s.velocity.x = -SPEED;
-    s.velocity.y = 0.;
+    s.velocity.y = SPEED;
+    s.velocity.x = 0.;
     s.velocity_body = true;
     s.mode.yaw = modeVelocity;
-    s.attitudeRate.yaw = 0;
-  }else if(angle < ANGLE_90 -MAX_ANGLE){
+    s.attitudeRate.yaw = 0;}
+    else if(angle < -MAX_ANGLE){
     DEBUG_PRINT("turn left\n");
     memset(&s,0,sizeof(s));
     s.mode.z = modeAbs;
-    s.position.z = 0.3;
+    s.position.z = 0.15;
     s.mode.x = modeVelocity;
     s.mode.y = modeVelocity;
     s.velocity.x = 0;
@@ -120,11 +121,11 @@ static void cpxPacketCallback(const CPXPacket_t* cpxRx) {
     s.velocity_body = true;
     s.mode.yaw = modeVelocity;
     s.attitudeRate.yaw = 3;
-  }else if(angle > ANGLE_90 +MAX_ANGLE){
+  }else if(angle > MAX_ANGLE){
     DEBUG_PRINT("turn right\n");
     memset(&s,0,sizeof(s));
     s.mode.z = modeAbs;
-    s.position.z = 0.3;
+    s.position.z = 0.15;
     s.mode.x = modeVelocity;
     s.mode.y = modeVelocity;
     s.velocity.x = 0;
@@ -132,11 +133,11 @@ static void cpxPacketCallback(const CPXPacket_t* cpxRx) {
     s.velocity_body = true;
     s.mode.yaw = modeVelocity;
     s.attitudeRate.yaw = -3;
-  }else{
+  }else  {
     DEBUG_PRINT("forward\n");
     memset(&s,0,sizeof(s));
     s.mode.z = modeAbs;
-    s.position.z = 0.3;
+    s.position.z = 0.15;
     s.mode.x = modeVelocity;
     s.mode.y = modeVelocity;
     s.velocity.x = SPEED;
@@ -146,7 +147,6 @@ static void cpxPacketCallback(const CPXPacket_t* cpxRx) {
     s.attitudeRate.yaw = 0;
   }
 }
-
 void appMain() {
   DEBUG_PRINT("Starting drone controller\n");
 
@@ -173,7 +173,7 @@ void appMain() {
 static void idle(setpoint_t *setpoint) {
 memset(setpoint,0,sizeof(*setpoint));
 setpoint->mode.z = modeAbs;
-setpoint->position.z = 0.3;
+setpoint->position.z = 0.15;
 setpoint->mode.x = modeVelocity;
 setpoint->mode.y = modeVelocity;
 setpoint->velocity.x = 0;
@@ -181,6 +181,8 @@ setpoint->velocity.y = 0;
 setpoint->velocity_body = true;
 setpoint->mode.yaw = modeVelocity;
 setpoint->attitudeRate.yaw = 0;
+s.mode.pitch = modeAbs;
+s.attitude.pitch = -45;
 }
 
 
