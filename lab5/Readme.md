@@ -1,10 +1,10 @@
 # IAA Lab5
 
 ## Virtual env 
-to run our  our python script
-
+We used python 3.12.0
+to run our our python scripts :
 - ´app.py´: client to connect to the crazyflie
-- ´./bottle_counting´: Count bottle on the webcam
+- ´./bottle_counting/counter_video_v2.ipynb´: Count bottle on the webcam
 ### Create virtual env based on requirements.txt
 
 With python 
