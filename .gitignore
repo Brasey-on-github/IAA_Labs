@@ -2,5 +2,5 @@
 *.o
 **/BUILD/*
 **/build/*
-./venv
+**/venv
 */pathfinding/dataset/images/
